@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,10 +14,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Markdown Reader - Upload and Preview Markdown Files",
-  description: "A beautiful markdown reader with file upload, live preview, and syntax highlighting. Upload your .md files or type directly to see them rendered in real-time.",
-  keywords: ["markdown", "reader", "preview", "file upload", "syntax highlighting"],
-  authors: [{ name: "Markdown Reader" }],
+  title: "Content Hub - Your Markdown Writing and Publishing Platform",
+  description: "A beautiful content hub for creating, editing, and managing markdown files. Perfect for newsletters, documentation, and content creation with analytics and file management.",
+  keywords: ["markdown", "content creation", "newsletter", "publishing", "file management", "analytics"],
+  authors: [{ name: "Content Hub" }],
 };
 
 export const viewport: Viewport = {
@@ -30,11 +31,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

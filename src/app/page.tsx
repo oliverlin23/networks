@@ -1,368 +1,251 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github-dark.css';
+import { useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Upload, Eye, Trash2, Download, Plus, BookOpen } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { 
+  BookOpen, 
+  FileText, 
+  Upload, 
+  Plus, 
+  Users, 
+  TrendingUp,
+  ArrowRight,
+  Sparkles,
+  Globe,
+  Code
+} from 'lucide-react';
 
-export default function MarkdownReader() {
-  const [markdown, setMarkdown] = useState(`# Welcome to Your Newsletter
+export default function HomePage() {
+  const [recentFiles] = useState([
+    { name: 'newsletter-2024-01.md', date: '2024-01-15', category: 'Newsletter' },
+    { name: 'content-strategy.md', date: '2024-01-10', category: 'Strategy' },
+    { name: 'community-guidelines.md', date: '2024-01-08', category: 'Guidelines' },
+  ]);
 
-*Published on ${new Date().toLocaleDateString('en-US', { 
-  year: 'numeric', 
-  month: 'long', 
-  day: 'numeric' 
-})}*
-
----
-
-## The Future of Content Creation
-
-In today's digital age, the way we consume and create content is evolving rapidly. This newsletter explores the latest trends, tools, and techniques that are shaping the future of content creation.
-
-### What You'll Learn
-
-- **Content Strategy**: How to build a sustainable content strategy
-- **Technology Trends**: The latest tools and platforms
-- **Community Building**: Creating engaged audiences
-- **Monetization**: Turning your content into a business
-
-## Getting Started with Content Creation
-
-Content creation is more than just writing—it's about building relationships with your audience. Here's how to get started:
-
-### 1. Define Your Niche
-
-Choose a topic you're passionate about and that has an audience. The more specific, the better.
-
-### 2. Create Consistently
-
-Consistency is key. Whether it's daily, weekly, or monthly, stick to your schedule.
-
-### 3. Engage with Your Audience
-
-Respond to comments, ask questions, and create content based on feedback.
-
-## Code Example: Building a Newsletter
-
-Here's how you might structure a newsletter system:
-
-\`\`\`javascript
-class Newsletter {
-  constructor(title, author) {
-    this.title = title;
-    this.author = author;
-    this.subscribers = [];
-    this.issues = [];
-  }
-
-  addSubscriber(email) {
-    this.subscribers.push(email);
-    console.log(\`Welcome \${email} to \${this.title}!\`);
-  }
-
-  publishIssue(content) {
-    const issue = {
-      id: Date.now(),
-      content,
-      publishedAt: new Date(),
-      readCount: 0
-    };
-    this.issues.push(issue);
-    this.notifySubscribers(issue);
-  }
-
-  notifySubscribers(issue) {
-    this.subscribers.forEach(subscriber => {
-      console.log(\`Sending issue #\${issue.id} to \${subscriber}\`);
-    });
-  }
-}
-\`\`\`
-
-## Reader Engagement Metrics
-
-| Metric | Current | Target |
-|--------|---------|--------|
-| Open Rate | 45% | 50% |
-| Click Rate | 12% | 15% |
-| Subscriber Growth | +8% | +10% |
-| Engagement Score | 7.2/10 | 8.0/10 |
-
-## What's Next?
-
-In the coming weeks, we'll explore:
-
-- [ ] Advanced content distribution strategies
-- [ ] Building a personal brand
-- [ ] Monetization through multiple channels
-- [ ] Community management best practices
-
----
-
-*Thanks for reading! If you found this valuable, consider sharing it with a friend.*
-
-**Subscribe to get the next issue delivered to your inbox.**`);
-
-  const [fileName, setFileName] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && (file.type === 'text/markdown' || file.name.endsWith('.md'))) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        setMarkdown(content);
-        setFileName(file.name);
-      };
-      reader.readAsText(file);
+  const [quickActions] = useState([
+    {
+      title: 'Create New Post',
+      description: 'Start writing a new newsletter or article',
+      icon: Plus,
+      href: '/reader',
+      color: 'bg-blue-500',
+      action: 'Create'
+    },
+    {
+      title: 'Upload Markdown',
+      description: 'Upload and preview existing markdown files',
+      icon: Upload,
+      href: '/reader',
+      color: 'bg-green-500',
+      action: 'Upload'
+    },
+    {
+      title: 'Browse Library',
+      description: 'View all your saved markdown files',
+      icon: FileText,
+      href: '/library',
+      color: 'bg-purple-500',
+      action: 'Browse'
+    },
+    {
+      title: 'Analytics',
+      description: 'View reader engagement and metrics',
+      icon: TrendingUp,
+      href: '/analytics',
+      color: 'bg-orange-500',
+      action: 'View'
     }
-  };
+  ]);
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && (file.type === 'text/markdown' || file.name.endsWith('.md'))) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        setMarkdown(content);
-        setFileName(file.name);
-      };
-      reader.readAsText(file);
+  const [features] = useState([
+    {
+      title: 'Rich Markdown Editor',
+      description: 'Write with live preview and syntax highlighting',
+      icon: Code
+    },
+    {
+      title: 'File Management',
+      description: 'Upload, organize, and manage your markdown files',
+      icon: FileText
+    },
+    {
+      title: 'Beautiful Themes',
+      description: 'Light and dark mode with customizable styling',
+      icon: Sparkles
+    },
+    {
+      title: 'Export Options',
+      description: 'Download your content in various formats',
+      icon: Globe
     }
-  };
-
-  const clearContent = () => {
-    setMarkdown('');
-    setFileName('');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const downloadMarkdown = () => {
-    const blob = new Blob([markdown], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName || 'newsletter.md';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  ]);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Substack-style Header */}
-      <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-background sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                <BookOpen className="h-4 w-4 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Your Newsletter</h1>
-                <p className="text-sm text-gray-600">Thoughts on content creation and community building</p>
+                <h1 className="text-2xl font-bold text-foreground">Content Hub</h1>
+                <p className="text-sm text-muted-foreground">Your markdown writing and publishing platform</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              {!isEditing && (
-                <Button
-                  onClick={() => setIsEditing(true)}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center space-x-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>New Post</span>
-                </Button>
-              )}
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                variant="outline"
-                size="sm"
-                className="flex items-center space-x-2"
-              >
-                <Upload className="h-4 w-4" />
-                <span>Import</span>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/reader">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Post
+                </Link>
               </Button>
+              <ThemeToggle />
             </div>
           </div>
         </div>
       </header>
 
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".md,.markdown,text/markdown"
-        onChange={handleFileUpload}
-        className="hidden"
-      />
-
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isEditing ? (
-          // Editor Mode
-          <div className="space-y-6">
-            {/* Editor Header */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-gray-900">Create New Post</h2>
-              <div className="flex space-x-3">
-                <Button
-                  onClick={downloadMarkdown}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center space-x-2"
-                >
-                  <Download className="h-4 w-4" />
-                  <span>Save</span>
-                </Button>
-                <Button
-                  onClick={clearContent}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center space-x-2"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span>Clear</span>
-                </Button>
-                <Button
-                  onClick={() => setIsEditing(false)}
-                  size="sm"
-                  className="flex items-center space-x-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  <span>Preview</span>
-                </Button>
-              </div>
-            </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
+            Welcome to Your Content Hub
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Create, edit, and manage your markdown content with a beautiful, modern interface. 
+            Perfect for newsletters, documentation, and content creation.
+          </p>
+        </div>
 
-            {/* File Upload Area */}
-            <Card className="border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors cursor-pointer">
-              <CardContent
-                className="p-6 text-center"
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Drop your markdown file here
-                </h3>
-                <p className="text-gray-600 mb-3">
-                  or click to browse files
-                </p>
-                {fileName && (
-                  <Badge variant="secondary" className="text-sm">
-                    📎 {fileName}
-                  </Badge>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Editor */}
-            <Card>
-              <CardContent className="p-0">
-                <textarea
-                  value={markdown}
-                  onChange={(e) => setMarkdown(e.target.value)}
-                  placeholder="Start writing your newsletter..."
-                  className="w-full h-96 p-6 resize-none border-0 focus:ring-0 focus:outline-none text-gray-700 font-mono text-sm leading-relaxed bg-transparent"
-                />
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
-          // Reader Mode (Substack-style)
-          <article className="prose prose-lg prose-gray max-w-none">
-            <div className="mb-8">
-              {fileName && (
-                <Badge variant="outline" className="mb-4">
-                  📎 {fileName}
-                </Badge>
-              )}
-            </div>
-            
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeHighlight]}
-              components={{
-                // Custom styling for code blocks
-                code: ({ className, children, ...props }) => {
-                  const match = /language-(\w+)/.exec(className || '');
-                  return match ? (
-                    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6">
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    </pre>
-                  ) : (
-                    <code className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm font-mono" {...props}>
-                      {children}
-                    </code>
-                  );
-                },
-                // Custom styling for tables
-                table: ({ children }) => (
-                  <div className="overflow-x-auto my-6">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      {children}
-                    </table>
+        {/* Quick Actions */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-semibold text-foreground mb-6">Quick Actions</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {quickActions.map((action, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer group">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center`}>
+                      <action.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   </div>
-                ),
-                th: ({ children }) => (
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-                    {children}
-                  </th>
-                ),
-                td: ({ children }) => (
-                  <td className="px-4 py-3 text-sm text-gray-900 border-t border-gray-200">
-                    {children}
-                  </td>
-                ),
-                // Custom styling for blockquotes
-                blockquote: ({ children }) => (
-                  <blockquote className="border-l-4 border-gray-300 pl-4 py-2 bg-gray-50 italic text-gray-700 my-6">
-                    {children}
-                  </blockquote>
-                ),
-                // Custom styling for horizontal rules
-                hr: () => (
-                  <hr className="border-gray-200 my-8" />
-                ),
-              }}
-            >
-              {markdown}
-            </ReactMarkdown>
+                </CardHeader>
+                <CardContent>
+                  <CardTitle className="text-lg mb-2">{action.title}</CardTitle>
+                  <CardDescription className="mb-4">{action.description}</CardDescription>
+                  <Button asChild variant="outline" size="sm" className="w-full">
+                    <Link href={action.href}>
+                      {action.action}
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
 
-            {/* Substack-style footer */}
-            <div className="mt-12 pt-8 border-t border-gray-200">
-              <div className="text-center">
-                <p className="text-gray-600 mb-4">
-                  Thanks for reading! If you found this valuable, consider sharing it with a friend.
-                </p>
-                <Button className="bg-black hover:bg-gray-800 text-white">
-                  Subscribe to get the next issue
-                </Button>
+        {/* Recent Files */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-semibold text-foreground">Recent Files</h3>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/library">View All</Link>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentFiles.map((file, index) => (
+              <Card key={index} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <Badge variant="secondary">{file.category}</Badge>
+                  </div>
+                  <h4 className="font-medium text-foreground mb-2">{file.name}</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Last edited {file.date}
+                  </p>
+                  <Button asChild variant="outline" size="sm" className="w-full">
+                    <Link href={`/reader?file=${file.name}`}>
+                      Open File
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-semibold text-foreground mb-6">Features</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, index) => (
+              <Card key={index} className="text-center">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h4 className="font-medium text-foreground mb-2">{feature.title}</h4>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">24</p>
+                  <p className="text-sm text-muted-foreground">Total Files</p>
+                </div>
               </div>
-            </div>
-          </article>
-        )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                  <Users className="h-5 w-5 text-green-500" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">1,247</p>
+                  <p className="text-sm text-muted-foreground">Readers</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-purple-500" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">89%</p>
+                  <p className="text-sm text-muted-foreground">Engagement Rate</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   );
