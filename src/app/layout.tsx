@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,10 +15,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Content Hub - Your Markdown Writing and Publishing Platform",
-  description: "A beautiful content hub for creating, editing, and managing markdown files. Perfect for newsletters, documentation, and content creation with analytics and file management.",
-  keywords: ["markdown", "content creation", "newsletter", "publishing", "file management", "analytics"],
-  authors: [{ name: "Content Hub" }],
+  title: "BlogHub - Share Your Thoughts with the World",
+  description: "A modern blogging platform for writers and readers. Create, publish, and discover amazing stories with our community.",
+  keywords: ["blogging", "writing", "publishing", "community", "stories", "content creation"],
+  authors: [{ name: "BlogHub" }],
 };
 
 export const viewport: Viewport = {
@@ -41,7 +42,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
